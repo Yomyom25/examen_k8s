@@ -1,0 +1,56 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: webapp-deploy # [cite: 27]
+spec:
+  replicas: 2 # Requisito 3.1: Mínimo 2 réplicas [cite: 29]
+  strategy:
+    type: RollingUpdate # Requisito 3.1: Estrategia de actualización [cite: 34]
+  selector:
+    matchLabels:
+      app: webapp
+  template:
+    metadata:
+      labels:
+        app: webapp
+    spec:
+      containers:
+      - name: webapp
+        image: yom25/app-k8s:v1 # Tu imagen [cite: 22]
+        ports:
+        - containerPort: 80
+        env:
+        # --- Variables desde ConfigMap (Requisito 3.3) ---
+        - name: BANNER
+          valueFrom:
+            configMapKeyRef:
+              name: webapp-config
+              key: BANNER
+        - name: DB_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: webapp-config
+              key: DB_HOST
+        - name: DB_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: webapp-config
+              key: DB_NAME
+        - name: DB_USER
+          valueFrom:
+            configMapKeyRef:
+              name: webapp-config
+              key: DB_USER
+        # Contraseña directa (por simplicidad, igual que en tu ejemplo)
+        - name: DB_PASS
+          value: "root"
+
+        # --- Variables Downward API (Requisito 3.1) ---
+        - name: POD_NAME # [cite: 31]
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: NODE_NAME # [cite: 32]
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName

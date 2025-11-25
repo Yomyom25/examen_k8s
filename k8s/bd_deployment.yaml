@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bd-deployment
+  labels:
+    app: mysql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+      # Contenedor 1: MySQL
+      - name: mysql
+        image: mysql:5.7
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "root"
+        - name: MYSQL_DATABASE
+          value: "examen_db" # [cite: 14] (Para que coincida con db.php)
+      - name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        ports:
+        - containerPort: 80
+        env:
+        - name: PMA_HOST
+          value: "127.0.0.1"
+        - name: PMA_USER
+          value: "root"
+        - name: PMA_PASSWORD
+          value: "root"

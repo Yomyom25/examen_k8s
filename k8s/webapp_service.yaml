@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webapp-service # [cite: 36]
+spec:
+  type: NodePort # Requisito 3.2: Tipo NodePort [cite: 37]
+  selector:
+    app: webapp
+  ports:
+    - port: 80
+      targetPort: 80
+      nodePort: 30005 # Requisito: Entre 30000-32767 [cite: 39]
+      protocol: TCP
